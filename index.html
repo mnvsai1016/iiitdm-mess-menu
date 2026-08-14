@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>IIITDM Mess Menu</title>
+  <title>Mess Menu | IIITDM</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400..700;1,6..72,400..700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -178,19 +178,42 @@
     }
 
     .eyebrow-tag {
-      font-size: 11px;
+      font-size: 12px;
       font-weight: 700;
       letter-spacing: 1.5px;
       text-transform: uppercase;
       color: var(--text-muted);
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .week-switch-badge {
+      background: var(--pill-bg);
+      border: 1px solid var(--border-color);
+      color: var(--text-color);
+      padding: 3px 10px;
+      border-radius: 12px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      transition: all 0.25s ease;
+    }
+
+    .week-switch-badge:hover {
+      background: var(--accent-color);
+      color: #FFFFFF;
+      border-color: var(--accent-color);
     }
 
     h1.app-title {
       font-family: var(--font-serif);
-      font-size: clamp(32px, 5vw, 48px);
+      font-size: clamp(34px, 5.5vw, 52px);
       font-weight: 600;
       letter-spacing: -0.5px;
       color: var(--text-color);
@@ -402,18 +425,6 @@
       font-weight: 700;
       letter-spacing: 0.5px;
       text-transform: uppercase;
-      transition: background-color 0.4s ease;
-    }
-
-    .meal-icon-badge {
-      width: 38px;
-      height: 38px;
-      border-radius: 50%;
-      background: var(--badge-bg);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 18px;
       transition: background-color 0.4s ease;
     }
 
@@ -680,9 +691,12 @@
     <header>
       <div class="header-left">
         <span class="eyebrow-tag">
-          IIITDM · EVEN WEEK MENU
+          <span id="weekLabelText">IIITDM · EVEN WEEK</span>
+          <button id="weekToggleBtn" class="week-switch-badge" title="Toggle between Even and Odd week menus">
+            ⇄ Switch
+          </button>
         </span>
-        <h1 class="app-title">IIITDM Mess Menu</h1>
+        <h1 class="app-title">Mess Menu</h1>
       </div>
 
       <div class="analog-clock" id="analogClock" title="Current time">
@@ -804,49 +818,95 @@
   </div>
 
   <script>
-    // Fixed EVEN WEEK Mess Menu Dataset
-    const messDataEven = {
-      Sunday: {
-        breakfast: ["Onion Carrot Uttapam", "Sambar & Coconut Chutney", "BBJ & Sprouts", "Seasonal Cut Fruits*** / Boiled Egg (1)", "Tea / Coffee / Milk"],
-        lunch: ["Tawa Chapathi & Sev Tomato Gravy", "Kovakai Fry", "Hyderabadi Paneer Biryani / Chicken Biryani with Raita", "Fryums & Pickle", "Ice Cream (1)", "Salad & Onion"],
-        snacks: ["Bhel Puri", "Tea / Coffee / Milk / Boost"],
-        dinner: ["Peanut Coconut Rice & Veg Kurma", "Rice, Sambar & Rasam", "Cauliflower Peas Poriyal", "Curd & Papad", "Gulab Jamun (2)"]
+    // Full Mess Menu Datasets (Even & Odd Weeks)
+    const messData = {
+      even: {
+        Sunday: {
+          breakfast: ["Onion Carrot Uttapam", "Sambar & Coconut Chutney", "BBJ & Sprouts", "Seasonal Cut Fruits*** / Boiled Egg (1)", "Tea / Coffee / Milk"],
+          lunch: ["Tawa Chapathi & Sev Tomato Gravy", "Kovakai Fry", "Hyderabadi Paneer Biryani / Chicken Biryani with Raita", "Fryums & Pickle", "Ice Cream (1)", "Salad & Onion"],
+          snacks: ["Bhel Puri", "Tea / Coffee / Milk / Boost"],
+          dinner: ["Peanut Coconut Rice & Veg Kurma", "Rice, Sambar & Rasam", "Cauliflower Peas Poriyal", "Curd & Papad", "Gulab Jamun (2)"]
+        },
+        Monday: {
+          breakfast: ["Poori & Aloo Masala Curry", "BBJ & Boiled Groundnuts", "Banana (1) / Boiled Egg (1)", "Tea / Coffee / Milk"],
+          lunch: ["Pulkha & Garlic Tomato Curry", "Spinach Kootu", "Rice, Vatha Kolambu & Curd", "Papad & Pickle", "Seasonal Fruit Juice & Onion"],
+          snacks: ["Sundal (Boiled black channa / green gram dal)", "Tea / Coffee / Milk / Raagi Malt"],
+          dinner: ["Tawa Chapathi & Channa Masala", "Lemon Rice & Curd Rice", "Potato Poriyal", "Buttermilk", "Boondi Laddu (1)"]
+        },
+        Tuesday: {
+          breakfast: ["Ragi Dosa", "Sambar & Groundnut Chutney", "BBJ & Sprouts", "Seasonal Cut Fruits*** / Boiled Egg (1)", "Tea / Coffee / Milk"],
+          lunch: ["Tawa Chapathi & Dum Aloo", "Aloo Masala Curry", "Jeera Rice & Plain Rice", "Rasam & Curd", "Fryums & Pickle", "Salad & Onion"],
+          snacks: ["Onion Pakoda", "Tea / Coffee / Milk / Boost"],
+          dinner: ["Idli, Sambar, Karam Podi, Tomato Onion Chutney & Ghee", "Aloo Curry & Raita", "Sweet Pongal***"]
+        },
+        Wednesday: {
+          breakfast: ["Upma", "Sambar & Tomato Onion Chutney", "BBJ & Boiled Groundnuts", "Banana (1) / Boiled Egg (1)", "Tea / Coffee / Milk"],
+          lunch: ["Pulkha & Yellow Channa Dal Masala", "Chilli Soya Bean Dry*** & Perugu Pachadi", "Rice, Sambar, Rasam & Curd", "Fryums & Pickle", "Seasonal Fruit Juice & Onion"],
+          snacks: ["Banana Bajji (3) & Kadalai Chutney", "Tea / Coffee / Milk / Raagi Malt"],
+          dinner: ["Special Dinner: Tawa Chapathi & Veg Biryani", "Bagara Rice & Black Channa Curry", "Buttermilk & Onion", "Pineapple Kesari***"]
+        },
+        Thursday: {
+          breakfast: ["Masala Dosa", "Mysore Bonda (3)", "Coconut Chutney", "BBJ & Sprouts", "Seasonal Cut Fruits*** / Boiled Egg (1)", "Tea / Coffee / Milk"],
+          lunch: ["Tawa Chapathi & Paneer Peas Curry", "Hyderabadi Veg Pulao & Raita", "Fryums & Pickle", "Salad & Onion"],
+          snacks: ["Sweet Corn (half piece - 6cm)", "Tea / Coffee / Milk / Boost"],
+          dinner: ["Chole Bature", "Idiyappam", "Plain Rice & Mixed Dal", "Buttermilk", "Paruppu Payasam with Jaggery"]
+        },
+        Friday: {
+          breakfast: ["Rava Idly", "Vada (3)", "Sambar & Tomato Onion Chutney", "BBJ & Boiled Groundnuts", "Banana (1) / Boiled Egg (1)", "Tea / Coffee / Milk"],
+          lunch: ["Phulka & Baigan Methi Curry", "Rice, Sambar & Rasam", "Gongura Chutney & Papad", "Seasonal Fruit Juice & Onion"],
+          snacks: ["Mix Veg Maggi (130gm) & Tomato Sauce", "Tea / Coffee / Milk / Raagi Malt"],
+          dinner: ["Millet Dosa & Peanut Chutney", "Rice, Sambar & Rasam", "Cauliflower Peas Poriyal", "Bread Halwa***"]
+        },
+        Saturday: {
+          breakfast: ["Rava Idly, Vada (3) & Methi Paratha", "Kabuli Channa Masala", "BBJ & Sprouts", "Seasonal Cut Fruits*** / Boiled Egg (1)", "Tea / Coffee / Milk"],
+          lunch: ["Tawa Chapathi & Kerala Sadhya Avial", "Andhra Tomato Dal & Greens Poriyal", "Rice, Sambar & Rasam", "Papad & Pickle", "Banana Juice & Onion"],
+          snacks: ["Aloo Samosa (2) with Sauce & Mint Chutney", "Tea / Coffee / Milk / Boost"],
+          dinner: ["Phulka & Gutti Vankaya Curry", "Lemon Rice, Curd Rice & Potato Poriyal", "Buttermilk", "Payasam / Dessert"]
+        }
       },
-      Monday: {
-        breakfast: ["Poori & Aloo Masala Curry", "BBJ & Boiled Groundnuts", "Banana (1) / Boiled Egg (1)", "Tea / Coffee / Milk"],
-        lunch: ["Pulkha & Garlic Tomato Curry", "Spinach Kootu", "Rice, Vatha Kolambu & Curd", "Papad & Pickle", "Seasonal Fruit Juice & Onion"],
-        snacks: ["Sundal (Boiled black channa / green gram dal)", "Tea / Coffee / Milk / Raagi Malt"],
-        dinner: ["Tawa Chapathi & Channa Masala", "Lemon Rice & Curd Rice", "Potato Poriyal", "Buttermilk", "Boondi Laddu (1)"]
-      },
-      Tuesday: {
-        breakfast: ["Ragi Dosa", "Sambar & Groundnut Chutney", "BBJ & Sprouts", "Seasonal Cut Fruits*** / Boiled Egg (1)", "Tea / Coffee / Milk"],
-        lunch: ["Tawa Chapathi & Dum Aloo", "Aloo Masala Curry", "Jeera Rice & Plain Rice", "Rasam & Curd", "Fryums & Pickle", "Salad & Onion"],
-        snacks: ["Onion Pakoda", "Tea / Coffee / Milk / Boost"],
-        dinner: ["Idli, Sambar, Karam Podi, Tomato Onion Chutney & Ghee", "Aloo Curry & Raita", "Sweet Pongal***"]
-      },
-      Wednesday: {
-        breakfast: ["Upma", "Sambar & Tomato Onion Chutney", "BBJ & Boiled Groundnuts", "Banana (1) / Boiled Egg (1)", "Tea / Coffee / Milk"],
-        lunch: ["Pulkha & Yellow Channa Dal Masala", "Chilli Soya Bean Dry*** & Perugu Pachadi", "Rice, Sambar, Rasam & Curd", "Fryums & Pickle", "Seasonal Fruit Juice & Onion"],
-        snacks: ["Banana Bajji (3) & Kadalai Chutney", "Tea / Coffee / Milk / Raagi Malt"],
-        dinner: ["Special Dinner: Tawa Chapathi & Veg Biryani", "Bagara Rice & Black Channa Curry", "Buttermilk & Onion", "Pineapple Kesari***"]
-      },
-      Thursday: {
-        breakfast: ["Masala Dosa", "Mysore Bonda (3)", "Coconut Chutney", "BBJ & Sprouts", "Seasonal Cut Fruits*** / Boiled Egg (1)", "Tea / Coffee / Milk"],
-        lunch: ["Tawa Chapathi & Paneer Peas Curry", "Hyderabadi Veg Pulao & Raita", "Fryums & Pickle", "Salad & Onion"],
-        snacks: ["Sweet Corn (half piece - 6cm)", "Tea / Coffee / Milk / Boost"],
-        dinner: ["Chole Bature", "Idiyappam", "Plain Rice & Mixed Dal", "Buttermilk", "Paruppu Payasam with Jaggery"]
-      },
-      Friday: {
-        breakfast: ["Rava Idly", "Vada (3)", "Sambar & Tomato Onion Chutney", "BBJ & Boiled Groundnuts", "Banana (1) / Boiled Egg (1)", "Tea / Coffee / Milk"],
-        lunch: ["Phulka & Baigan Methi Curry", "Rice, Sambar & Rasam", "Gongura Chutney & Papad", "Seasonal Fruit Juice & Onion"],
-        snacks: ["Mix Veg Maggi (130gm) & Tomato Sauce", "Tea / Coffee / Milk / Raagi Malt"],
-        dinner: ["Millet Dosa & Peanut Chutney", "Rice, Sambar & Rasam", "Cauliflower Peas Poriyal", "Bread Halwa***"]
-      },
-      Saturday: {
-        breakfast: ["Rava Idly, Vada (3) & Methi Paratha", "Kabuli Channa Masala", "BBJ & Sprouts", "Seasonal Cut Fruits*** / Boiled Egg (1)", "Tea / Coffee / Milk"],
-        lunch: ["Tawa Chapathi & Kerala Sadhya Avial", "Andhra Tomato Dal & Greens Poriyal", "Rice, Sambar & Rasam", "Papad & Pickle", "Banana Juice & Onion"],
-        snacks: ["Aloo Samosa (2) with Sauce & Mint Chutney", "Tea / Coffee / Milk / Boost"],
-        dinner: ["Phulka & Gutti Vankaya Curry", "Lemon Rice, Curd Rice & Potato Poriyal", "Buttermilk", "Payasam / Dessert"]
+      odd: {
+        Sunday: {
+          breakfast: ["Rava Dosa & Semiya Upma", "Sambar & Groundnut Chutney", "BBJ & Boiled Groundnuts", "Seasonal Cut Fruits*** / Boiled Egg (1)", "Tea / Coffee / Milk"],
+          lunch: ["Tawa Chapathi & Plantain Poriyal", "Veg Biryani & Raita", "Badusha (1)", "Pickle & Papad", "Salad & Onion"],
+          snacks: ["Pani Puri (6), Green & Tamarind Chutney", "Tea / Coffee / Milk / Raagi Malt"],
+          dinner: ["Chapatti & Mix Veg Curry (Punjabi Style)", "Tamarind Rice & Aloo Bhujiya Sabhji", "Buttermilk & Fryums", "Seasonal Cut Fruits*** & Turmeric Milk"]
+        },
+        Monday: {
+          breakfast: ["Pongal & Vada (3)", "Sambar & Coconut Chutney", "BBJ & Sprouts", "Banana (1) / Boiled Egg (1)", "Tea / Coffee / Milk"],
+          lunch: ["Pulkha & Dal Makhani", "Beans Carrot Poriyal", "Rice, Sambar, Rasam & Curd", "Pickle & Papad", "Seasonal Fruit Juice & Onion"],
+          snacks: ["Pasta", "Tea / Coffee / Milk / Boost"],
+          dinner: ["Chole Bature & Onion Mirch Salad", "Rice & Snake Gourd Kootu", "Banana (1)"]
+        },
+        Tuesday: {
+          breakfast: ["Wheat Dosa / Pesarattu", "Sambar & Tomato Onion Chutney", "BBJ & Boiled Groundnuts", "Seasonal Cut Fruits*** / Boiled Egg (1)", "Tea / Coffee / Milk"],
+          lunch: ["Tawa Chapathi & Dum Aloo", "Onion Pakoda*** & Perugu Pachadi", "Rice, Panchratan Dal, Rasam & Curd", "Fryums & Pickle", "Salad & Onion"],
+          snacks: ["Masala Vada (3) & Pottukadalai Chutney", "Tea / Coffee / Milk / Raagi Malt"],
+          dinner: ["Tawa Chapathi & Channa Masala", "Rice, Sambar & Beetroot Poriyal", "Buttermilk", "Bread Halwa"]
+        },
+        Wednesday: {
+          breakfast: ["Poori & Channa Masala", "BBJ & Sprouts", "Banana (1) / Boiled Egg (1)", "Tea / Coffee / Milk"],
+          lunch: ["Pulkha & Soya Curry", "Kadai Paneer***", "Keerai Sambar & Poriyal", "Rice, Rasam, Puli Kolambu & Papad", "Seasonal Fruit Juice & Onion"],
+          snacks: ["Boiled Groundnuts Chat", "Tea / Coffee / Milk / Boost"],
+          dinner: ["Phulka & Kambu Idli", "Sambar & Tomato Onion Chutney", "Sabudhana Kheer", "Khulfi (1) (Malai / Pista / Mango / Strawberry)"]
+        },
+        Thursday: {
+          breakfast: ["Wheat Rava Upma & Poha", "Mysore Bonda (3) & Chutney", "BBJ & Boiled Groundnuts", "Seasonal Cut Fruits*** / Boiled Egg (1)", "Tea / Coffee / Milk"],
+          lunch: ["Tawa Chapathi & Lauki Chana Dal", "Gobi 65***", "Rice, Masala Sambar & Curd", "Fryums & Pickle", "Salad & Onion"],
+          snacks: ["Channa Chat", "Tea / Coffee / Milk / Raagi Malt"],
+          dinner: ["Flavoured Chapati & Paneer Kofta Curry", "Rice, Sambar, Rasam & Poriyal", "Vermicelli Payasam"]
+        },
+        Friday: {
+          breakfast: ["Idli & Vada (3)", "Sambar & Coconut Chutney", "BBJ & Sprouts", "Banana (1) / Boiled Egg (1)", "Tea / Coffee / Milk"],
+          lunch: ["Phulka & Rajma Curry", "Palak Paneer Curry / Chicken Curry", "Rice, Rasam & Curd", "Gongura Chutney & Fryums", "Seasonal Fruit Juice & Ice Cream (1)"],
+          snacks: ["Boiled Green Moong Dal", "Tea / Coffee / Milk / Boost"],
+          dinner: ["Set Dosa & Veg Pulao", "Vada Curry, Pickle & Curd", "Kesari Bath***"]
+        },
+        Saturday: {
+          breakfast: ["Aloo Paratha & Channa Masala", "Curd & Pickle", "BBJ & Boiled Groundnuts", "Seasonal Cut Fruits*** / Boiled Egg (1)", "Tea / Coffee / Milk"],
+          lunch: ["Tawa Chapathi & Tomato Andhra Dal", "Plantain Stem Kootu", "Rice, Rasam & Curd", "Banana Juice & Onion"],
+          snacks: ["Millet Puttu", "Tea / Coffee / Milk / Raagi Malt"],
+          dinner: ["Pulka & Channa Peas Palak", "Sambar Rice & Curd Rice", "Soya Chilli & Dal Fry", "Kara Boondi & Gulab Jamun (2)"]
+        }
       }
     };
 
@@ -863,6 +923,7 @@
     ];
 
     // App State
+    let currentWeek = "even"; // Starts as Even Week (Today)
     const todayIndex = new Date().getDay(); // Actual current day index
     let selectedDayIndex = todayIndex; // Default to today
     let selectedMealIndex = 0; // Auto-detected meal
@@ -875,6 +936,8 @@
     else if (currentHour >= 18 || currentHour < 5) selectedMealIndex = 3; // Dinner
 
     // DOM Elements
+    const weekLabelText = document.getElementById("weekLabelText");
+    const weekToggleBtn = document.getElementById("weekToggleBtn");
     const daysBar = document.getElementById("daysBar");
     const mealNavBtns = document.querySelectorAll(".meal-nav-btn");
     const dateBadge = document.getElementById("dateBadge");
@@ -909,10 +972,18 @@
       });
     }
 
+    // Toggle Between Even Week and Odd Week
+    weekToggleBtn.addEventListener("click", () => {
+      currentWeek = currentWeek === "even" ? "odd" : "even";
+      weekLabelText.textContent = `IIITDM · ${currentWeek.toUpperCase()} WEEK`;
+      renderCard();
+    });
+
     // Render Meal Card & Dynamic Ambient Background
     function renderCard() {
       const dayFull = daysFull[selectedDayIndex];
-      const dayMenu = messDataEven[dayFull];
+      const activeWeekData = messData[currentWeek];
+      const dayMenu = activeWeekData ? activeWeekData[dayFull] : null;
       const mealKey = mealNames[selectedMealIndex].toLowerCase();
       const items = dayMenu ? dayMenu[mealKey] : [];
 
@@ -920,7 +991,7 @@
       document.body.setAttribute("data-meal-theme", mealThemes[selectedMealIndex]);
 
       // Update Date Badge: "TODAY" or day name
-      const isToday = selectedDayIndex === todayIndex;
+      const isToday = selectedDayIndex === todayIndex && currentWeek === "even";
       dateBadge.textContent = isToday ? "TODAY" : daysFull[selectedDayIndex].toUpperCase();
 
       // Update Card Header
@@ -933,8 +1004,7 @@
       `).join('');
 
       // Check if current day/meal has Special Dinner / Special Menu
-      const hasSpecial = (selectedDayIndex === 3 && selectedMealIndex === 3) || // Wednesday Dinner
-                         items.some(i => i.toLowerCase().includes("special"));
+      const hasSpecial = items.some(i => i.toLowerCase().includes("special"));
 
       if (hasSpecial) {
         specialBanner.style.display = "flex";
@@ -957,7 +1027,8 @@
     function renderNextUpPanel() {
       nextUpList.innerHTML = '';
       const dayFull = daysFull[selectedDayIndex];
-      const dayMenu = messDataEven[dayFull];
+      const activeWeekData = messData[currentWeek];
+      const dayMenu = activeWeekData ? activeWeekData[dayFull] : null;
 
       const upcoming = mealNames
         .map((name, idx) => ({ name, idx }))
@@ -1054,7 +1125,6 @@
     setInterval(updateAnalogClock, 1000);
 
     // Automatic Light / Dark Mode based on real time of day
-    // Dark (moonlit) mode applies in the evening/night window; light mode otherwise.
     function applyAutoTheme() {
       const hour = new Date().getHours();
       const isDark = hour >= 18 || hour < 6; // 6:00 PM - 6:00 AM => dark
@@ -1062,8 +1132,6 @@
     }
 
     applyAutoTheme();
-    // Re-check periodically so the theme flips automatically as time passes
-    // without needing a page refresh.
     setInterval(applyAutoTheme, 5 * 60 * 1000);
 
     // Special Modal Handlers
